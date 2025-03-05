@@ -3,16 +3,23 @@ import { getDocs, collection } from "firebase/firestore";
 import { db } from "../../../firebase/firestoreConfig";
 
 const Applications = () => {
+  // create state to store job applications data
   const [applications, setApplications] = useState([]);
 
+  // use useEffect hook to fetch applications when component run
   useEffect(() => {
     const fetchApplications = async () => {
       try {
+        // fetch job applications from firestore
         const applicationsSnapshot = await getDocs(collection(db, "jobApplications"));
+
+        // map the fetched documents into an array
         const applicationsList = applicationsSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+
+        // update the state with the fetched applications
         setApplications(applicationsList);
       } catch (error) {
         console.error("Error fetching applications:", error);
@@ -29,9 +36,11 @@ const Applications = () => {
           Job Applications
         </h2>
 
+        {/* Display message if no applications are found */}
         {applications.length === 0 ? (
           <p className="text-center text-gray-500">No applications found.</p>
         ) : (
+          // display applications
           <table className="w-full border-collapse border border-gray-300">
             <thead>
               <tr className="bg-gray-200 text-gray-700">
@@ -42,6 +51,7 @@ const Applications = () => {
               </tr>
             </thead>
             <tbody>
+              {/* display each application in a table row */}
               {applications.map((app) => (
                 <tr key={app.id} className="text-center border">
                   <td className="p-3 border">{app.name || "N/A"}</td>
@@ -61,7 +71,6 @@ const Applications = () => {
               ))}
             </tbody>
           </table>
-
         )}
       </div>
     </div>

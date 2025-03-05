@@ -33,7 +33,7 @@ const SignIn = () => {
 
                 // toast.success("User Login Successfully", { position: "top-center" });
                 
-                // Navigate based on role
+                // navigate route based on role
                 if (userRole === "admin") {
                     // navigate('/admin');
                     toast.success("User Login Successfully", { position: "top-center" });
