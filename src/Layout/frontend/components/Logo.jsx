@@ -14,9 +14,10 @@ const Logo = () => {
 
     return (
         <>
-            <div className="bg-blue-950 h-screen py-36 w-full relative">
-                <div className="h-[250px] w-[250px] my-[15%] md:my-[5%] mx-auto">
-                    <img className='h-[200px] w-[200px] mx-auto' src={"logo.png"} alt="logo" />                   
+            <div className="bg-backgroundBlue h-screen py-36 w-full relative">
+                <div className="my-[15%] md:my-[5%] mx-auto">
+                    {/* <img className='h-[200px] w-[200px] mx-auto' src={"logo.png"} alt="logo" />                    */}
+                    <div className=" text-4xl md:text-9xl mx-auto text-white font-bold text-center">TalentMatch</div>
                 </div>
             </div>
         </>

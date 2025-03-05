@@ -1,19 +1,24 @@
 import React from 'react'
 import AdminLayout from '../Layout/admin/AdminLayout'
-import UploadFile from '../Layout/admin/components/UploadFile'
-import AddJobs from '../Layout/admin/components/AddJobs'
+import AddJobForm from '../Layout/admin/components/AddJobForm'
+import Applications from '../Layout/admin/components/Applications'
+import Jobs from '../Layout/frontend/components/Jobs'
 
 const Admin = {
     element: <AdminLayout/>,
     children: [
         {
             path: "/admin",
-            element: <AddJobs/>
+            element: <Jobs/>
         },
         {
-            path: "/upload_image",
-            element: <UploadFile/>
+            path: "/jobApplications",
+            element: <Applications/>
         },
+        {
+            path: "/addJobForm",
+            element: <AddJobForm/>
+        }
         
     ]
 }

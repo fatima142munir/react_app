@@ -22,7 +22,7 @@ const SignIn = () => {
     const handleSubmit = async () => {
         try {
             await signInWithEmailAndPassword(auth, formData.email, formData.password)
-            toast.success("User Login Successfully")
+            toast.success("User Login Successfully", { position: "top-center" })
             console.log("user login ")
             setTimeout(() => {
                 navigate('/Jobs')
@@ -117,17 +117,20 @@ const SignIn = () => {
 
                             <div className='flex flex-wrap justify-center'>
                                 {isactive && <div className="p-2">
-                                    <button className=" mx-auto text-white bg-blue-950 border-0 py-1 sm:py-2 px-2 sm:px-8 focus:outline-none hover:bg-[#5c44f1] rounded text-sm sm:text-lg" onClick={handleSignUp}>Sign Up</button>
+                                    <button className=" mx-2 text-white bg-buttonPrimary border-0 py-1 sm:py-2 px-2 sm:px-8 focus:outline-none hover:bg-blue-700 rounded text-sm sm:text-lg" onClick={handleSignUp}>Sign Up</button>
+                                    <button className=" mx-2 text-gray-800 bg-gray-300 border-0 py-1 sm:py-2 px-2 sm:px-8 focus:outline-none hover:bg-gray-400 rounded text-sm sm:text-lg" onClick={handleGoogleSignIn}>Sign In with Google</button>
                                 </div>}
                                 {!isactive && <div className="p-2">
-                                    <button className=" mx-auto text-white bg-blue-950 border-0 py-1 sm:py-2 px-2 sm:px-8 focus:outline-none hover:bg-[#5c44f1] rounded text-sm sm:text-lg" onClick={handleSubmit}>Sign In</button>
+                                    <button className=" mx-2 text-white bg-buttonPrimary border-0 py-1 sm:py-2 px-2 sm:px-8 focus:outline-none hover:bg-blue-700 rounded text-sm sm:text-lg" onClick={handleSubmit}>Sign In</button>
+                                    <button className=" mx-2 text-gray-800 bg-gray-300 border-0 py-1 sm:py-2 px-2 sm:px-8 focus:outline-none hover:bg-gray-400 rounded text-sm sm:text-lg" onClick={handleGoogleSignIn}>Sign In with Google</button>
                                 </div>}
                                 <div className="text-center pt-5">
-                                    {!isactive && <div>
-                                        <span>Not Registered..!</span> <span onClick={handleChangeform} className='text-[#5c44f1] cursor-pointer'>Sign Up</span>
+                                    {/* <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 m-1 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" onClick={handleGoogleSignIn} >Sign In with Google</button> */}
+                                    {!isactive && <div className='pl-0'>
+                                        <span>Not Registered..!</span> <span onClick={handleChangeform} className='text-buttonPrimary cursor-pointer'>Sign Up</span>
                                     </div>}
                                     {isactive && <div>
-                                        <span onClick={handleChangeform} className='text-[#5c44f1] cursor-pointer'>Sign In</span>
+                                        <span>Already have account! </span><span onClick={handleChangeform} className='text-buttonPrimary cursor-pointer'>Sign In</span>
                                     </div>}
 
 

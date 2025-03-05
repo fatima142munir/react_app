@@ -1,16 +1,21 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import SideBar from './components/SideBar'
+import { ToastContainer } from 'react-toastify';
+import Header from './components/Header';
+import Footer from '../frontend/components/Footer';
+
 
 const AdminLayout = () => {
   return (
     <>
-      <div className='flex h-[100%] w-screen'>
-        <SideBar />
-        <div className="lg:w-6/8 w-2/3 bg-amber-700 mb-10 lg:mb-0 p-10 overflow-hidden">
+      
+        <Header />
+        <div className="bg-biegeBackground p-10 overflow-hidden">
           <Outlet />
+          <ToastContainer />
         </div>
-      </div>
+        <Footer/>
+    
     </>
   )
 }
