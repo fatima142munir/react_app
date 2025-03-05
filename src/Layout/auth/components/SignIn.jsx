@@ -1,10 +1,10 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setDoc, doc } from 'firebase/firestore';
 import { auth, db, signInWithGooglePopUp } from '../../../firebase/firestoreConfig';
-import { toast } from 'react-toastify';
-import { onAuthStateChanged } from 'firebase/auth';
+import { toast, ToastContainer } from 'react-toastify';
+import { getDoc } from 'firebase/firestore';
 
 const SignIn = () => {
 
@@ -19,47 +19,65 @@ const SignIn = () => {
         lastName: ''
     })
     let navigate = useNavigate();
+
     const handleSubmit = async () => {
         try {
-            await signInWithEmailAndPassword(auth, formData.email, formData.password)
-            toast.success("User Login Successfully", { position: "top-center" })
-            console.log("user login ")
-            setTimeout(() => {
-                navigate('/Jobs')
+            const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+            const user = userCredential.user;
 
-            }, 1000)
+            // Retrieve user role from Firestore
+            const userDoc = await getDoc(doc(db, "users_data", user.uid));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const userRole = userData.role;
 
-        } catch (error) {
-            toast.error("User Login Failed", { position: "top-center" })
-
-        }
-
-    }
-
-    const handleSignUp = async () => {
-        // console.log(formData)
-        try {
-            await createUserWithEmailAndPassword(auth, formData.email, formData.password)
-            const user = auth.currentUser;
-            console.log(user, "user register successfully")
-            toast.success("User Register Successfully", {
-                position: "top-center",
-
-            })
-            if (user) {
-                await setDoc(doc(db, "users_data", user.uid), {
-                    userName: formData.userName,
-                    lastName: formData.lastName,
-                    email: formData.email,
-                })
+                // toast.success("User Login Successfully", { position: "top-center" });
+                
+                // Navigate based on role
+                if (userRole === "admin") {
+                    // navigate('/admin');
+                    toast.success("User Login Successfully", { position: "top-center" });
+                    setTimeout(() => {
+                        navigate('/admin');
+                    }, 2000);
+                } else {
+                    toast.success("User Login Successfully", { position: "top-center" });
+                    setTimeout(() => {
+                        navigate('/jobs');
+                    }, 2000);
+                }
             }
         } catch (error) {
-            toast.error("User Register Failed", { position: "top-center" })
-
+            toast.error("User Login Failed", { position: "top-center" });
         }
+    };
 
+    const handleSignUp = async () => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            const user = userCredential.user;
 
-    }
+            let role = "user";
+
+            // assign admin role to a specific email
+            if (formData.email === "admin@example.com") {
+                role = "admin";
+            }
+
+            // Save user details & role in Firestore
+            await setDoc(doc(db, "users_data", user.uid), {
+                userName: formData.userName,
+                lastName: formData.lastName,
+                email: formData.email,
+                role: role
+            });
+
+            toast.success("User Registered Successfully!", { position: "top-center" });
+        } catch (error) {
+            toast.error("User Registration Failed", { position: "top-center" });
+        }
+    };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -111,7 +129,7 @@ const SignIn = () => {
                                 </div>
                                 <div className="">
                                     <label htmlFor="password" className="leading-7 text-sm text-gray-600">Password</label>
-                                    <input onChange={(e) => { handleChange(e) }} type="text" value={formData.password} id="password" name="password" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                                    <input onChange={(e) => { handleChange(e) }} type="password" value={formData.password} id="password" name="password" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
                                 </div>
                             </div>
 
@@ -125,7 +143,6 @@ const SignIn = () => {
                                     <button className=" mx-2 text-gray-800 bg-gray-300 border-0 py-1 sm:py-2 px-2 sm:px-8 focus:outline-none hover:bg-gray-400 rounded text-sm sm:text-lg" onClick={handleGoogleSignIn}>Sign In with Google</button>
                                 </div>}
                                 <div className="text-center pt-5">
-                                    {/* <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 m-1 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0" onClick={handleGoogleSignIn} >Sign In with Google</button> */}
                                     {!isactive && <div className='pl-0'>
                                         <span>Not Registered..!</span> <span onClick={handleChangeform} className='text-buttonPrimary cursor-pointer'>Sign Up</span>
                                     </div>}
@@ -139,6 +156,7 @@ const SignIn = () => {
                         </div>
                     </div>
                 </div>
+                <ToastContainer/>
             </section>
         </>
     )
