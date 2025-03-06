@@ -25,7 +25,7 @@ const Jobs = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center">
+    <div className="min-h-screen bg-biegeBackground flex flex-col items-center">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Available Jobs</h2>
 
       {jobs.length === 0 ? (
@@ -46,7 +46,7 @@ const Jobs = () => {
               <h2 className="text-gray-700 text-xl">Hours</h2>
               <p className="text-gray-700">{job.hours}</p>
               <button
-                onClick={() => navigate("/uploadResume")}
+                onClick={() => navigate(`/uploadResume/${job.id}/${job.title}`)}
                 className="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
                 Apply Now

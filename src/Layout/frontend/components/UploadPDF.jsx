@@ -2,14 +2,40 @@ import { useState } from "react";
 import { useParams } from "react-router-dom"; 
 import axios from "axios";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "../../../firebase/firestoreConfig";
 import { toast } from "react-toastify";
+import { db } from "../../../firebase/firestoreConfig";
 
 const UploadPDF = () => {
-  const { jobId } = useParams(); 
+  const { jobId, jobTitle } = useParams(); 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [file, setFile] = useState(null);
+
+  const saveApplicationToFirebase = async (jobTitle, jobId, name, email, pdfUrl) => {
+    if (!jobId) {
+      console.error("Error: jobId is undefined.");
+    //   alert("Error: jobId is missing.");
+      return;
+    }
+
+    try {
+      const applicationsCollection = collection(db, "jobApplications");
+      await addDoc(applicationsCollection, {
+        jobId,
+        jobTitle,
+        name,
+        email,
+        cvUrl: pdfUrl,
+        appliedAt: new Date(),
+      });
+
+      console.log("Application submitted successfully!");
+      // toast.success("Application submitted successfully!", { position: "top-center" });
+    } catch (error) {
+      console.error("Error saving application:", error);
+      toast.error("Error saving application:", { position: "top-center" });
+    }
+  };
 
   const uploadPDFToCloudinary = async () => {
     if (!file || !name || !email) {
@@ -24,7 +50,7 @@ const UploadPDF = () => {
 
     try {
       const res = await axios.post(
-        `https://api.cloudinary.com/v1_1/dowv7ykvy/raw/upload`,
+        import.meta.env.VITE_REACT_APP_CLOUDINARY_API,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
@@ -32,41 +58,18 @@ const UploadPDF = () => {
       const uploadedUrl = res.data.secure_url;
     //   console.log("Uploaded PDF URL:", uploadedUrl);
 
-      await saveApplicationToFirebase(jobId, name, email, uploadedUrl);
+      await saveApplicationToFirebase(jobTitle, jobId, name, email, uploadedUrl);
       toast.success("Application submitted successfully!", { position: "top-center" });
 
       setName("");
       setEmail("");
       setFile(null);
+      console.log("Job ID:", jobId);
     } catch (error) {
       console.error("Upload Error:", error);
     }
   };
 
-  const saveApplicationToFirebase = async (jobId, name, email, pdfUrl) => {
-    if (!jobId) {
-      console.error("Error: jobId is undefined.");
-    //   alert("Error: jobId is missing.");
-      return;
-    }
-
-    try {
-      const applicationsCollection = collection(db, "jobApplications");
-      await addDoc(applicationsCollection, {
-        jobId,
-        name,
-        email,
-        cvUrl: pdfUrl,
-        appliedAt: new Date(),
-      });
-
-      console.log("Application submitted successfully!");
-      toast.success("Application submitted successfully!", { position: "top-center" });
-    } catch (error) {
-      console.error("Error saving application:", error);
-      toast.error("Error saving application:", { position: "top-center" });
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col items-center p-6">
@@ -93,7 +96,7 @@ const UploadPDF = () => {
       />
       <button
         onClick={uploadPDFToCloudinary}
-        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+        className="bg-buttonPrimary text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
       >
         Submit Application
       </button>
